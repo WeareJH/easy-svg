@@ -1,0 +1,21 @@
+{
+  "esnext": true,
+  "curly": true,
+  "eqeqeq": true,
+  "immed": false,
+  "laxbreak": false,
+  "latedef": "nofunc",
+  "newcap": true,
+  "noarg": true,
+  "plusplus": true,
+  "sub": true,
+  "undef": true,
+  "quotmark": "single",
+  "unused": true,
+  "indent": 4,
+  "eqnull": true,
+  "node": true,
+  "strict": false,
+  "mocha": true,
+  "jasmine": true
+}
