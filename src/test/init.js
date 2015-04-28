@@ -1,6 +1,8 @@
-import {create} from '../lib/index.js';
+import {create, stream} from '../lib/index.js';
+import vfs from 'vinyl-fs';
 import {parse, build} from '../lib/parser.js';
 import {assert} from 'chai';
+import through2 from 'through2';
 
 const input1 = `<?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
@@ -143,9 +145,9 @@ describe('Using exported functions', () => {
         return parse({
             item: builder.items[0]
         }).then((result) => {
-            assert.ok(result.symbol);
-            assert.equal(result.symbol.$.id, 'svg-newtab');
-            assert.equal(result.symbol.$.viewBox, '0 0 64 64');
+            assert.ok(result.transformed.symbol);
+            assert.equal(result.transformed.symbol.$.id, 'svg-newtab');
+            assert.equal(result.transformed.symbol.$.viewBox, '0 0 64 64');
         });
     });
     it('Strips FILL', () => {
@@ -161,7 +163,7 @@ describe('Using exported functions', () => {
         return parse({
             item: builder.items[0]
         }).then((item) => {
-            let built = build({item});
+            let built = build({item: item.transformed});
             let line = built.split('\n')[0];
             assert.equal(line, '<symbol id="svg-newtab" viewBox="0 0 64 64">');
         });
@@ -188,5 +190,29 @@ describe('Using exported functions', () => {
         return builder.compile().then(function (out) {
             assert.include(out, 'viewBox="0 0 194 40"');
         });
+    });
+    it('Can accessed compiled items', () => {
+        let builder = create();
+        builder.add({key: 'wergtert/newtab.svg', content: input4});
+        return builder.compile().then(function () {
+            assert.equal(builder.compiled[0].id, 'svg-newtab');
+        });
+    });
+    it('Can use the stream', (done) => {
+
+        let paths = [];
+        vfs.src("fixtures/*.svg")
+            .pipe(stream())
+            .pipe(through2.obj(function (file, enc, cb) {
+                paths.push(file.path);
+                cb();
+            }, function () {
+                assert.equal(paths.length, 3);
+                assert.include(paths, 'icons.svg');
+                assert.include(paths, 'preview.html');
+                assert.include(paths, 'svg4everybody.min.js');
+                done();
+            }))
+
     });
 });

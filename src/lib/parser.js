@@ -51,7 +51,10 @@ function parseSvg({item, opts = {}}) {
             if (err) {
                 return deferred.reject(err);
             }
-            deferred.resolve(transformParsedSvg({item, result}));
+            deferred.resolve({
+                result: result,
+                transformed: transformParsedSvg({item, result})
+            });
         });
     });
 

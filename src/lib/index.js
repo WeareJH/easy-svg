@@ -1,6 +1,7 @@
 import assert from 'assert';
 import path   from 'path';
 import assign from 'object-assign';
+import stream from './plugins/stream';
 import {parse, build} from './parser.js';
 import Q from 'q';
 
@@ -48,19 +49,25 @@ class Symbols {
 
         let proms = [];
 
-        this.items.forEach((item) => proms.push(parse({item})));
+        this.items.forEach((item) => {
+            var parsed = parse({item});
+            proms.push(parsed);
+        });
 
         return Q.all(proms)
-            .then(Symbols.wrapMany);
+            .then((out) => {
+                return this.saveTransformed(out);
+            })
+            .then(this.wrapMany);
     }
 
     /**
      * @param items
      * @returns {*}
      */
-    static wrapMany (items) {
+    wrapMany (items) {
         let wrapper = (all, item) => {
-            all += (build({item}) + '\n');
+            all += (build({item: item.transformed}) + '\n');
             return all;
         };
         return Symbols.wrap(items.reduce(wrapper, ''));
@@ -73,6 +80,16 @@ class Symbols {
     ${items}
 </svg>`;
     }
+
+    /**
+     * Save the transformed data
+     * @param out
+     * @returns {*}
+     */
+    saveTransformed(out) {
+        this.compiled = out.map(item => item.transformed.symbol.$);
+        return out;
+    }
 }
 
 function createSymbolBuilder (opts) {
@@ -82,6 +99,7 @@ function createSymbolBuilder (opts) {
 export default createSymbolBuilder;
 
 export {createSymbolBuilder as create};
+export {stream};
 
 export function myOtherFunction () {
     return 'OK - Other';
