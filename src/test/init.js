@@ -198,8 +198,7 @@ describe('Using exported functions', () => {
             assert.equal(builder.compiled[0].id, 'svg-newtab');
         });
     });
-    it('Can use the stream', (done) => {
-
+    it('Can sends the correct files down with no configuration', (done) => {
         let paths = [];
         vfs.src("fixtures/*.svg")
             .pipe(stream())
@@ -212,7 +211,38 @@ describe('Using exported functions', () => {
                 assert.include(paths, 'preview.html');
                 assert.include(paths, 'svg4everybody.min.js');
                 done();
+            }));
+    });
+    it('Can omit the preview', (done) => {
+        let paths = [];
+        vfs.src("fixtures/*.svg")
+            .pipe(stream({
+                preview: false
             }))
-
+            .pipe(through2.obj(function (file, enc, cb) {
+                paths.push(file.path);
+                cb();
+            }, function () {
+                assert.equal(paths.length, 2);
+                assert.include(paths, 'icons.svg');
+                assert.include(paths, 'svg4everybody.min.js');
+                done();
+            }));
+    });
+    it('Can omit the JS', (done) => {
+        let paths = [];
+        vfs.src("fixtures/*.svg")
+            .pipe(stream({
+                js: false,
+                preview: false
+            }))
+            .pipe(through2.obj(function (file, enc, cb) {
+                paths.push(file.path);
+                cb();
+            }, function () {
+                assert.equal(paths.length, 1);
+                assert.include(paths, 'icons.svg');
+                done();
+            }));
     });
 });
