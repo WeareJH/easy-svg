@@ -1,30 +1,60 @@
-import {parseString, Builder} from './xml2js/xml2js';
+import {parseString, Builder} from 'xml2js';
 import assign from 'object-assign';
 import Q from 'q';
+import SVGO from 'svgo';
+
+let svgo = new SVGO();
+
+svgo.config.plugins[2].push({
+    type: 'perItem',
+    active: true,
+    name: 'removeAttrs',
+    params: {
+        attrs: ['fill']
+    },
+    fn (item, params) {
+        item.eachAttr(function(attr) {
+            if (params.attrs.indexOf(attr.name) > -1) {
+                item.removeAttr(attr.name);
+            }
+        });
+    }
+});
 
 const parseDefaults = {
-    stripAttrs: ['id', 'fill'],
     trim: true,
     valueProcessors: [(item) => item.trim()]
 };
+
 const builderDefaults = {
     headless: true
 };
 
+const svgoDefaults = {
+    plugins: [
+        {removeFill: true}
+    ]
+};
+
 /**
- * Parse an svg
  * @param item
  * @param opts
- * @param cb
+ * @returns {*|promise}
  */
-function parseSvg({item, opts = {}, cb = () => {}}) {
+function parseSvg({item, opts = {}}) {
+
     let deferred = Q.defer();
-    parseString(item.content, assign({}, parseDefaults, opts), function (err, result) {
-        if (err) {
-            return deferred.reject(err);
-        }
-        deferred.resolve(transformParsedSvg({item, result}));
+
+    svgo.optimize(item.content, (result) => {
+
+        parseString(result.data, assign({}, parseDefaults, opts), (err, result) => {
+            if (err) {
+                return deferred.reject(err);
+            }
+            deferred.resolve(transformParsedSvg({item, result}));
+        });
     });
+
     return deferred.promise;
 }
 
@@ -43,13 +73,16 @@ function buildSvg({item, opts = {}, cb = () => {}}) {
  * Add viewbox and id to symbol element
  * @param item
  * @param result
- * @returns {{symbol: {$: {viewBox: viewbox, id: *}}}}
+ * @returns {{symbol: {$: {viewBox: viewBox, id: *}}}}
  */
 function transformParsedSvg({item, result}) {
 
-    let viewbox = result.svg.$.viewBox;
+    let {height, width, viewBox} = result.svg.$;
+
     delete result.svg.$;
+
     let other = result.svg;
+
     let newsvg = {
         'symbol': {
             '$': {
@@ -58,16 +91,17 @@ function transformParsedSvg({item, result}) {
         }
     };
 
-    if (viewbox) {
-        newsvg.symbol.$.viewBox = viewbox;
+    if (viewBox) {
+        newsvg.symbol.$.viewBox = viewBox;
+    } else {
+        newsvg.symbol.$.viewBox = `0 0 ${width} ${height}`;
     }
 
-    Object.keys(other).forEach(function (key) {
-        newsvg.symbol[key] = other[key];
-    });
+    Object.keys(other).forEach((key) => newsvg.symbol[key] = other[key]);
 
     return newsvg;
 }
 
 export {parseSvg as parse}
 export {buildSvg as build}
+export {transformParsedSvg as process}

@@ -84,5 +84,5 @@ export default createSymbolBuilder;
 export {createSymbolBuilder as create};
 
 export function myOtherFunction () {
-    return "OK - Other";
+    return 'OK - Other';
 }
