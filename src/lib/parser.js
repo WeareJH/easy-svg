@@ -3,7 +3,9 @@ import assign from 'object-assign';
 import Q from 'q';
 
 const parseDefaults = {
-    stripAttrs: ['id', 'fill']
+    stripAttrs: ['id', 'fill'],
+    trim: true,
+    valueProcessors: [(item) => item.trim()]
 };
 const builderDefaults = {
     headless: true
@@ -51,11 +53,14 @@ function transformParsedSvg({item, result}) {
     let newsvg = {
         'symbol': {
             '$': {
-                viewBox: viewbox,
                 id: item.id
             }
         }
     };
+
+    if (viewbox) {
+        newsvg.symbol.$.viewBox = viewbox;
+    }
 
     Object.keys(other).forEach(function (key) {
         newsvg.symbol[key] = other[key];

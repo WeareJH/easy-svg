@@ -322,7 +322,7 @@
                             if (!(attrkey in obj) && !_this.options.mergeAttrs) {
                                 obj[attrkey] = {};
                             }
-                            newValue = node.attributes[key];
+                            newValue = node.attributes[key].replace(/\n|\t/g, '').trim();
                             processedKey = _this.options.attrNameProcessors ? processName(_this.options.attrNameProcessors, key) : key;
                             if (_this.options.mergeAttrs) {
                                 _this.assignOrPush(obj, processedKey, newValue);
@@ -358,7 +358,7 @@
                             obj[charkey] = obj[charkey].trim();
                         }
                         if (_this.options.normalize) {
-                            obj[charkey] = obj[charkey].replace(/\s{2,}/g, " ").trim();
+                            obj[charkey] = obj[charkey].replace(/\s{2,}/g, " ");
                         }
                         obj[charkey] = _this.options.valueProcessors ? processName(_this.options.valueProcessors, obj[charkey]) : obj[charkey];
                         if (Object.keys(obj).length === 1 && charkey in obj && !_this.EXPLICIT_CHARKEY) {
