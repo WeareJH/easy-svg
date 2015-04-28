@@ -1,6 +1,6 @@
 {
   "name": "easy-svg",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A complete svg + symbols workflow",
   "main": "lib/index.js",
   "directories": {
