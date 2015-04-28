@@ -1,11 +1,12 @@
 import fs from 'fs';
+import path from 'path';
 import File from 'vinyl';
 import {create} from '../index';
 import through2 from 'through2';
 import assign from 'object-assign';
 
 const svg4everybody = require.resolve('svg4everybody/svg4everybody.min.js');
-const previewPath = './templates/preview.html';
+const previewPath   = path.resolve(__dirname, '../../templates/preview.html');
 
 const defaults = {
     cwd: process.cwd(),

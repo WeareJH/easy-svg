@@ -21,6 +21,10 @@
     "unit": "npm run es6 && mocha --recursive test",
     "test": "npm run unit"
   },
+  "files": [
+    "lib",
+    "templates"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
