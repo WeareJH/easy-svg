@@ -1,7 +1,5 @@
-var file  = require('vinyl');
 var fs  = require('fs');
 var symb = require('./lib/index');
-var through2 = require('through2');
 
 var builder = symb.create();
 
