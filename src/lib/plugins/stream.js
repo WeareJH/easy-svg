@@ -14,7 +14,8 @@ const defaults = {
         path: 'icons.svg'
     },
     preview: {
-        path: 'preview.html'
+        path: 'preview.html',
+        iconSize: '150px'
     },
     js: {
         path: 'svg4everybody.min.js'
@@ -87,20 +88,58 @@ export default function easySvgStream(config) {
 function makePreview (builder, opts) {
 
     let preview = fs.readFileSync(previewPath, 'utf-8');
-    let script = '';
+    let js = '';
 
     if (opts.js) {
-        script = `<script src="${opts.js.path}"></script>`;
+        js = makeScript({path: opts.js.path});
     }
 
-    preview = preview.replace('%js%', script);
-
-    return new Buffer(preview.replace('%svgs%', builder.compiled.reduce(function (all, item) {
-
-        all += `<div>
-    <svg><use xlink:href="${opts.svg.path}#${item.id}"></use></svg>
-</div>`;
+    let svgs = builder.compiled.reduce(function (all, item) {
+        all += makeItem({path: opts.svg.path, id: item.id});
         return all;
+    }, '');
 
-    }, '')));
+    return new Buffer(template(preview, {
+        js,
+        svgs,
+        iconSize: opts.preview.iconSize
+    }));
+}
+
+/**
+ * @param path
+ * @param id
+ * @returns {*}
+ */
+function makeItem ({path, id}) {
+    return `<div class="icon-wrapper">
+    <div class="icon-box">
+        <svg><use xlink:href="${path}#${id}"></use></svg>
+    </div>
+    <div class="icon-snippet">
+        <pre><code>${id}</code></pre>
+    </div>
+</div>`;
+}
+
+/**
+ * @param path
+ * @returns {*}
+ */
+function makeScript ({path}) {
+    return `<script src="${path}"></script>`;
+}
+
+/**
+ * @param input
+ * @param ctx
+ * @returns {void|XML|string|*}
+ */
+function template (input, ctx) {
+    return input.replace(/\$\{(.+?)\}/g, function (...args) {
+        if (typeof ctx[args[1]] !== 'undefined') {
+            return ctx[args[1]];
+        }
+        return '';
+    });
 }

@@ -6,4 +6,4 @@ vfs.src('fixtures/*.svg')
     .on('error', function (err) {
         console.log(err.stack);
     })
-    .pipe(vfs.dest("./out"))
+    .pipe(vfs.dest("./out"));
