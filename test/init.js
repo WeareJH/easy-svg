@@ -119,6 +119,18 @@ describe('Using exported functions', function () {
             done();
         }));
     });
+    it('can accept the config object when used via a stream', function (done) {
+        var files = [];
+        _vfs2['default'].src('fixtures/bin.svg').pipe(_create$stream.stream({
+            id: 'shane-%f'
+        })).pipe(_through22['default'].obj(function (file, enc, cb) {
+            files.push(file._contents.toString());
+            cb();
+        }, function () {
+            _assert.assert.include(files[0], 'id="shane-bin"');
+            done();
+        }));
+    });
     it('Can omit the preview', function (done) {
         var paths = [];
         _vfs2['default'].src('fixtures/*.svg').pipe(_create$stream.stream({

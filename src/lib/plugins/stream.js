@@ -24,9 +24,9 @@ const defaults = {
 
 export default function easySvgStream(config) {
 
-    let builder = create();
-
     const opts  = assign({}, defaults, config);
+
+    let builder = create(opts);
 
     return through2.obj(function (file, enc, cb) {
 

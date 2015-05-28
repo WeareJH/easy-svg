@@ -213,6 +213,20 @@ describe('Using exported functions', () => {
                 done();
             }));
     });
+    it('can accept the config object when used via a stream', (done) => {
+        let files = [];
+        vfs.src("fixtures/bin.svg")
+            .pipe(stream({
+                id: "shane-%f"
+            }))
+            .pipe(through2.obj(function (file, enc, cb) {
+                files.push(file._contents.toString());
+                cb();
+            }, function () {
+                assert.include(files[0], 'id="shane-bin"');
+                done();
+            }));
+    });
     it('Can omit the preview', (done) => {
         let paths = [];
         vfs.src("fixtures/*.svg")
