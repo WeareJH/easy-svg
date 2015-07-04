@@ -198,6 +198,24 @@ describe('Using exported functions', () => {
             assert.equal(builder.compiled[0].id, 'svg-newtab');
         });
     });
+    it('keeps fill=none attr', () => {
+        const input5 = `<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In  -->
+<svg version="1.1"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
+	 x="0px" y="0px" width="191.4px" height="191.4px" viewBox="0 0 191.4 191.4" enable-background="new 0 0 191.4 191.4"
+	 xml:space="preserve">
+<defs>
+</defs>
+<circle id="XMLID_20_" fill="none" stroke="#FFFFFF" stroke-width="22" stroke-miterlimit="10" cx="95.7" cy="95.7" r="84.7"/>
+<path id="XMLID_19_" fill="#FFFFFF" d="M87.8,57l46.7,32.6c4.2,3,4.2,9.2,0,12.2l-45.3,31.6c-4.7,3.3-11.1-0.1-11.1-5.8V95.7V62C78.1,57.1,83.7,54.1,87.8,57z"/>
+</svg>
+`;
+        let builder = create();
+        builder.add({key: 'wergtert/newtab.svg', content: input5});
+        return builder.compile().then(function (out) {
+            assert.include(out, 'fill="none"');
+        });
+    });
     it('Can sends the correct files down with no configuration', (done) => {
         let paths = [];
         vfs.src("fixtures/*.svg")

@@ -3,7 +3,13 @@ import assign from 'object-assign';
 import Q from 'q';
 import SVGO from 'svgo';
 
-let svgo = new SVGO();
+const svgoDefaults = {
+    plugins: [
+        {removeFill: false}
+    ]
+};
+
+let svgo = new SVGO(svgoDefaults);
 
 svgo.config.plugins[2].push({
     type: 'perItem',
@@ -15,7 +21,9 @@ svgo.config.plugins[2].push({
     fn (item, params) {
         item.eachAttr(function(attr) {
             if (params.attrs.indexOf(attr.name) > -1) {
-                item.removeAttr(attr.name);
+                if (attr.value !== 'none') {
+                    item.removeAttr(attr.name);
+                }
             }
         });
     }
@@ -28,12 +36,6 @@ const parseDefaults = {
 
 const builderDefaults = {
     headless: true
-};
-
-const svgoDefaults = {
-    plugins: [
-        {removeFill: true}
-    ]
 };
 
 /**
