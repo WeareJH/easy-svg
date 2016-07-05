@@ -167,4 +167,22 @@ describe('Using exported functions', function () {
             done();
         }));
     });
+    it('Can propagate errors from svgo parsing', function (done) {
+        _vfs2['default'].src('fixtures/invalid/unclosed-tags.svg').pipe(_create$stream.stream()).on('error', function (err) {
+            _assert.assert.include(err.message, 'unclosed-tags.svg:');
+            done();
+        });
+    });
+    it('Can handle files that cannot be parsed (jibberish)', function (done) {
+        _vfs2['default'].src('fixtures/invalid/random.svg').pipe(_create$stream.stream()).on('error', function (err) {
+            _assert.assert.include(err.message, 'random.svg: SVGO');
+            done();
+        });
+    });
+    it('Can throw when no files processed (maybe empty)', function (done) {
+        _vfs2['default'].src('fixtures/invalid/empty.svg').pipe(_create$stream.stream()).on('error', function (err) {
+            _assert.assert.include(err.message, 'No svg files were passed down stream');
+            done();
+        });
+    });
 });

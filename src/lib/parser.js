@@ -2,6 +2,7 @@ import {parseString, Builder} from 'xml2js';
 import assign from 'object-assign';
 import Q from 'q';
 import SVGO from 'svgo';
+import {basename} from 'path';
 
 const svgoDefaults = {
     plugins: [
@@ -47,20 +48,41 @@ function parseSvg({item, opts = {}}) {
 
     let deferred = Q.defer();
 
-    svgo.optimize(item.content, (result) => {
-
-        parseString(result.data, assign({}, parseDefaults, opts), (err, result) => {
-            if (err) {
-                return deferred.reject(err);
+    try {
+        svgo.optimize(item.content, (result) => {
+            if (result.error) {
+                deferred.reject(createError(item, `SVGO: ${result.error}`));
+                return;
             }
-            deferred.resolve({
-                result: result,
-                transformed: transformParsedSvg({item, result})
+            parseString(result.data, assign({}, parseDefaults, opts), (err, result) => {
+                if (err) {
+                    return deferred.reject(err);
+                }
+                deferred.resolve({
+                    result: result,
+                    transformed: transformParsedSvg({item, result})
+                });
             });
         });
-    });
+    } catch (e) {
+        deferred.reject(createError(item, e.message));
+    }
 
     return deferred.promise;
+}
+
+function createError (item, message) {
+    const base    = basename(item.key);
+    const e       = new Error(`${base}: ${message}`);
+    const stack   = e.stack.split('\n');
+    e.stack = [
+        stack[0],
+        ` File: ${base}`,
+        ` Path: ${item.key}`,
+        ` Msg:  ${message}`,
+        ``
+    ].join('\n');
+    return e;
 }
 
 /**

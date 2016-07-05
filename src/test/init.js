@@ -277,4 +277,28 @@ describe('Using exported functions', () => {
                 done();
             }));
     });
+    it('Can propagate errors from svgo parsing', (done) => {
+        vfs.src("fixtures/invalid/unclosed-tags.svg")
+            .pipe(stream())
+            .on('error', function (err) {
+                assert.include(err.message, 'unclosed-tags.svg:');
+                done();
+            });
+    });
+    it('Can handle files that cannot be parsed (jibberish)', (done) => {
+        vfs.src("fixtures/invalid/random.svg")
+            .pipe(stream())
+            .on('error', function (err) {
+                assert.include(err.message, 'random.svg: SVGO');
+                done();
+            });
+    });
+    it('Can throw when no files processed (maybe empty)', (done) => {
+        vfs.src("fixtures/invalid/empty.svg")
+            .pipe(stream())
+            .on('error', function (err) {
+                assert.include(err.message, 'No svg files were passed down stream');
+                done();
+            });
+    });
 });

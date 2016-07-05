@@ -31,7 +31,11 @@ export default function easySvgStream(config) {
     return through2.obj(function (file, enc, cb) {
 
         if (file.path.match(/\.svg$/)) {
-            builder.add({key: file.path, content: file.contents.toString()});
+            const content = file.contents.toString();
+
+            if (content.trim().length) {
+                builder.add({key: file.path, content: file.contents.toString()});
+            }
         }
 
         cb();
