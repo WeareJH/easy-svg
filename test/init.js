@@ -1,18 +1,20 @@
-var _interopRequireDefault = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+'use strict';
 
-var _create$stream = require('../lib/index.js');
+var _index = require('../lib/index.js');
 
-var _vfs = require('vinyl-fs');
+var _vinylFs = require('vinyl-fs');
 
-var _vfs2 = _interopRequireDefault(_vfs);
+var _vinylFs2 = _interopRequireDefault(_vinylFs);
 
-var _parse$build = require('../lib/parser.js');
+var _parser = require('../lib/parser.js');
 
-var _assert = require('chai');
+var _chai = require('chai');
 
-var _through2 = require('through2');
+var _through = require('through2');
 
-var _through22 = _interopRequireDefault(_through2);
+var _through2 = _interopRequireDefault(_through);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var input1 = '<?xml version="1.0" encoding="utf-8"?>\n<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->\n<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\n\t width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">\n<g id="BOOK_2_1_" enable-background="new    ">\n\t<g id="BOOK_2">\n\t\t<g>\n\t\t\t<path d="M10.759,32.73L10.759,32.73l11,5l0,0C22.137,37.902,22.557,38,23,38c1.657,0,3-1.343,3-3\n\t\t\t\tc0-1.214-0.721-2.259-1.759-2.731l0,0l-11-5l0,0C12.863,27.097,12.443,27,12,27c-1.657,0-3,1.343-3,3\n\t\t\t\tC9,31.214,9.721,32.259,10.759,32.73z M10.759,43.73L10.759,43.73l11,5l0,0C22.137,48.902,22.557,49,23,49c1.657,0,3-1.343,3-3\n\t\t\t\tc0-1.214-0.721-2.259-1.759-2.73l0,0l-11-5l0,0C12.863,38.098,12.443,38,12,38c-1.657,0-3,1.343-3,3\n\t\t\t\tC9,42.214,9.721,43.259,10.759,43.73z M10.759,21.731L10.759,\n\t\t\t\t21.731l11,5l0,0C22.137,26.903,22.557,27,23,27c1.657,0,3-1.343,3-3\n\t\t\t\tc0-1.214-0.721-2.259-1.759-2.731l0,0l-11-5l0,0C12.863,16.097,12.443,16,12,16c-1.657,0-3,1.343-3,3\n\t\t\t\tC9,20.214,9.721,21.259,10.759,21.731z M41,49c0.443,0,0.863-0.098,1.241-0.27l0,0l11-5l0,0C54.279,43.259,55,42.214,55,41\n\t\t\t\tc0-1.657-1.343-3-3-3c-0.443,0-0.863,0.098-1.241,0.27l0,0l-11,5l0,0C38.721,43.741,38,44.786,38,46C38,47.657,39.343,49,41,49z\n\t\t\t\t M61,0c-0.406,0-0.794,0.082-1.146,0.228l0,0L59.848,0.23c-0.009,0.004-0.018,0.007-0.027,0.011L32,11.753L4.179,0.241\n\t\t\t\tC4.17,0.237,4.161,0.234,4.152,0.23L4.147,0.228l0,0C3.794,0.082,3.406,0,3,0C1.343,0,0,1.343,0,3v46\n\t\t\t\tc0,1.257,0.774,2.333,1.871,2.779l28.942,11.977C31.177,63.913,31.578,64,32,64s0.823-0.087,1.188-0.245l28.941-11.976\n\t\t\t\tC63.227,51.333,64,50.257,64,49V3C64,1.343,62.657,0,61,0z M29,56.512L6,46.995V7.488l23,9.517V56.512z M58,46.995l-23,9.517\n\t\t\t\tV17.005l23-9.517V46.995z M41,38c0.443,0,0.863-0.098,1.241-0.27l0,0l11-5C54.279,32.259,55,31.214,55,30c0-1.657-1.343-3-3-3\n\t\t\t\tc-0.443,0-0.863,0.097-1.241,0.269l0,0l-11,5l0,0C38.721,32.741,38,33.786,38,35C38,36.657,39.343,38,41,38z M41,27\n\t\t\t\tc0.443,0,0.863-0.097,1.241-0.269l0,0l11-5l0,0C54.279,21.259,55,20.214,55,19c0-1.657-1.343-3-3-3\n\t\t\t\tc-0.443,0-0.863,0.097-1.241,0.269l0,0l-11,5C38.721,21.741,38,22.786,38,24C38,25.657,39.343,27,41,27z"/>\n\t\t</g>\n\t</g>\n</g>\n</svg>\n';
 
@@ -24,164 +26,164 @@ var input4 = '<?xml version="1.0" encoding="utf-8"?>\n<!-- Generator: Adobe Illu
 
 describe('Using exported functions', function () {
     it('creates a builder', function () {
-        var builder = _create$stream.create();
-        _assert.assert.equal(builder.opts.id, 'svg-%f');
+        var builder = (0, _index.create)();
+        _chai.assert.equal(builder.opts.id, 'svg-%f');
     });
     it('Adds files', function () {
-        var builder = _create$stream.create();
+        var builder = (0, _index.create)();
         builder.add({ key: 'wergtert/book.svg', content: input1 });
-        _assert.assert.equal(builder.items.length, 1);
-        _assert.assert.equal(builder.items[0].id, 'svg-book');
+        _chai.assert.equal(builder.items.length, 1);
+        _chai.assert.equal(builder.items[0].id, 'svg-book');
     });
     it('Adds files with custom id', function () {
-        var builder = _create$stream.create({ id: 'icon-svg-%f' });
+        var builder = (0, _index.create)({ id: 'icon-svg-%f' });
         builder.add({ key: 'wergtert/book.svg', content: input1 });
-        _assert.assert.equal(builder.items.length, 1);
-        _assert.assert.equal(builder.items[0].id, 'icon-svg-book');
+        _chai.assert.equal(builder.items.length, 1);
+        _chai.assert.equal(builder.items[0].id, 'icon-svg-book');
     });
     it('Adds multiple files', function () {
-        var builder = _create$stream.create();
+        var builder = (0, _index.create)();
         builder.add({ key: 'wergtert/newtab.svg', content: input1 });
         builder.add({ key: '/wergw/wreggwergtert/book.svg', content: input2 });
-        _assert.assert.equal(builder.items.length, 2);
-        _assert.assert.equal(builder.items[0].id, 'svg-newtab');
-        _assert.assert.equal(builder.items[1].id, 'svg-book');
+        _chai.assert.equal(builder.items.length, 2);
+        _chai.assert.equal(builder.items[0].id, 'svg-newtab');
+        _chai.assert.equal(builder.items[1].id, 'svg-book');
     });
     it('Parses xml', function () {
-        var builder = _create$stream.create();
+        var builder = (0, _index.create)();
         builder.add({ key: 'wergtert/newtab.svg', content: input1 });
-        return _parse$build.parse({
+        return (0, _parser.parse)({
             item: builder.items[0]
         }).then(function (result) {
-            _assert.assert.ok(result.transformed.symbol);
-            _assert.assert.equal(result.transformed.symbol.$.id, 'svg-newtab');
-            _assert.assert.equal(result.transformed.symbol.$.viewBox, '0 0 64 64');
+            _chai.assert.ok(result.transformed.symbol);
+            _chai.assert.equal(result.transformed.symbol.$.id, 'svg-newtab');
+            _chai.assert.equal(result.transformed.symbol.$.viewBox, '0 0 64 64');
         });
     });
     it('Strips FILL', function () {
-        var builder = _create$stream.create();
+        var builder = (0, _index.create)();
         builder.add({ key: 'wergtert/newtab.svg', content: input3 });
         return builder.compile().then(function (out) {
-            _assert.assert.notInclude(out, 'fill="#000"');
+            _chai.assert.notInclude(out, 'fill="#000"');
         });
     });
     it('builds from parsed', function () {
-        var builder = _create$stream.create();
+        var builder = (0, _index.create)();
         builder.add({ key: 'wergtert/newtab.svg', content: input1 });
-        return _parse$build.parse({
+        return (0, _parser.parse)({
             item: builder.items[0]
         }).then(function (item) {
-            var built = _parse$build.build({ item: item.transformed });
+            var built = (0, _parser.build)({ item: item.transformed });
             var line = built.split('\n')[0];
-            _assert.assert.equal(line, '<symbol id="svg-newtab" viewBox="0 0 64 64">');
+            _chai.assert.equal(line, '<symbol id="svg-newtab" viewBox="0 0 64 64">');
         });
     });
     it('Compiles many into a single sheet', function () {
-        var builder = _create$stream.create();
+        var builder = (0, _index.create)();
         builder.add({ key: 'wergtert/newtab.svg', content: input1 });
         builder.add({ key: 'wergtert/sync.svg', content: input2 });
         return builder.compile().then(function (out) {
-            _assert.assert.include(out, '<symbol id="svg-newtab"');
-            _assert.assert.include(out, '<symbol id="svg-sync"');
+            _chai.assert.include(out, '<symbol id="svg-newtab"');
+            _chai.assert.include(out, '<symbol id="svg-sync"');
         });
     });
     it('Adds missing viewbox', function () {
-        var builder = _create$stream.create();
+        var builder = (0, _index.create)();
         builder.add({ key: 'wergtert/newtab.svg', content: input3 });
         return builder.compile().then(function (out) {
-            _assert.assert.include(out, 'viewBox="0 0 72 64"');
+            _chai.assert.include(out, 'viewBox="0 0 72 64"');
         });
     });
     it('Adds missing viewbox 2', function () {
-        var builder = _create$stream.create();
+        var builder = (0, _index.create)();
         builder.add({ key: 'wergtert/newtab.svg', content: input4 });
         return builder.compile().then(function (out) {
-            _assert.assert.include(out, 'viewBox="0 0 194 40"');
+            _chai.assert.include(out, 'viewBox="0 0 194 40"');
         });
     });
     it('Can accessed compiled items', function () {
-        var builder = _create$stream.create();
+        var builder = (0, _index.create)();
         builder.add({ key: 'wergtert/newtab.svg', content: input4 });
         return builder.compile().then(function () {
-            _assert.assert.equal(builder.compiled[0].id, 'svg-newtab');
+            _chai.assert.equal(builder.compiled[0].id, 'svg-newtab');
         });
     });
     it('keeps fill=none attr', function () {
         var input5 = '<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In  -->\n<svg version="1.1"\n\t xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"\n\t x="0px" y="0px" width="191.4px" height="191.4px" viewBox="0 0 191.4 191.4" enable-background="new 0 0 191.4 191.4"\n\t xml:space="preserve">\n<defs>\n</defs>\n<circle id="XMLID_20_" fill="none" stroke="#FFFFFF" stroke-width="22" stroke-miterlimit="10" cx="95.7" cy="95.7" r="84.7"/>\n<path id="XMLID_19_" fill="#FFFFFF" d="M87.8,57l46.7,32.6c4.2,3,4.2,9.2,0,12.2l-45.3,31.6c-4.7,3.3-11.1-0.1-11.1-5.8V95.7V62C78.1,57.1,83.7,54.1,87.8,57z"/>\n</svg>\n';
-        var builder = _create$stream.create();
+        var builder = (0, _index.create)();
         builder.add({ key: 'wergtert/newtab.svg', content: input5 });
         return builder.compile().then(function (out) {
-            _assert.assert.include(out, 'fill="none"');
+            _chai.assert.include(out, 'fill="none"');
         });
     });
     it('Can sends the correct files down with no configuration', function (done) {
         var paths = [];
-        _vfs2['default'].src('fixtures/*.svg').pipe(_create$stream.stream()).pipe(_through22['default'].obj(function (file, enc, cb) {
+        _vinylFs2.default.src("fixtures/*.svg").pipe((0, _index.stream)()).pipe(_through2.default.obj(function (file, enc, cb) {
             paths.push(file.path);
             cb();
         }, function () {
-            _assert.assert.equal(paths.length, 3);
-            _assert.assert.include(paths, 'icons.svg');
-            _assert.assert.include(paths, 'preview.html');
-            _assert.assert.include(paths, 'svg4everybody.min.js');
+            _chai.assert.equal(paths.length, 3);
+            _chai.assert.include(paths, 'icons.svg');
+            _chai.assert.include(paths, 'preview.html');
+            _chai.assert.include(paths, 'svg4everybody.min.js');
             done();
         }));
     });
     it('can accept the config object when used via a stream', function (done) {
         var files = [];
-        _vfs2['default'].src('fixtures/bin.svg').pipe(_create$stream.stream({
-            id: 'shane-%f'
-        })).pipe(_through22['default'].obj(function (file, enc, cb) {
+        _vinylFs2.default.src("fixtures/bin.svg").pipe((0, _index.stream)({
+            id: "shane-%f"
+        })).pipe(_through2.default.obj(function (file, enc, cb) {
             files.push(file._contents.toString());
             cb();
         }, function () {
-            _assert.assert.include(files[0], 'id="shane-bin"');
+            _chai.assert.include(files[0], 'id="shane-bin"');
             done();
         }));
     });
     it('Can omit the preview', function (done) {
         var paths = [];
-        _vfs2['default'].src('fixtures/*.svg').pipe(_create$stream.stream({
+        _vinylFs2.default.src("fixtures/*.svg").pipe((0, _index.stream)({
             preview: false
-        })).pipe(_through22['default'].obj(function (file, enc, cb) {
+        })).pipe(_through2.default.obj(function (file, enc, cb) {
             paths.push(file.path);
             cb();
         }, function () {
-            _assert.assert.equal(paths.length, 2);
-            _assert.assert.include(paths, 'icons.svg');
-            _assert.assert.include(paths, 'svg4everybody.min.js');
+            _chai.assert.equal(paths.length, 2);
+            _chai.assert.include(paths, 'icons.svg');
+            _chai.assert.include(paths, 'svg4everybody.min.js');
             done();
         }));
     });
     it('Can omit the JS', function (done) {
         var paths = [];
-        _vfs2['default'].src('fixtures/*.svg').pipe(_create$stream.stream({
+        _vinylFs2.default.src("fixtures/*.svg").pipe((0, _index.stream)({
             js: false,
             preview: false
-        })).pipe(_through22['default'].obj(function (file, enc, cb) {
+        })).pipe(_through2.default.obj(function (file, enc, cb) {
             paths.push(file.path);
             cb();
         }, function () {
-            _assert.assert.equal(paths.length, 1);
-            _assert.assert.include(paths, 'icons.svg');
+            _chai.assert.equal(paths.length, 1);
+            _chai.assert.include(paths, 'icons.svg');
             done();
         }));
     });
     it('Can propagate errors from svgo parsing', function (done) {
-        _vfs2['default'].src('fixtures/invalid/unclosed-tags.svg').pipe(_create$stream.stream()).on('error', function (err) {
-            _assert.assert.include(err.message, 'unclosed-tags.svg:');
+        _vinylFs2.default.src("fixtures/invalid/unclosed-tags.svg").pipe((0, _index.stream)()).on('error', function (err) {
+            _chai.assert.include(err.message, 'unclosed-tags.svg:');
             done();
         });
     });
     it('Can handle files that cannot be parsed (jibberish)', function (done) {
-        _vfs2['default'].src('fixtures/invalid/random.svg').pipe(_create$stream.stream()).on('error', function (err) {
-            _assert.assert.include(err.message, 'random.svg: SVGO');
+        _vinylFs2.default.src("fixtures/invalid/random.svg").pipe((0, _index.stream)()).on('error', function (err) {
+            _chai.assert.include(err.message, 'random.svg: SVGO');
             done();
         });
     });
     it('Can throw when no files processed (maybe empty)', function (done) {
-        _vfs2['default'].src('fixtures/invalid/empty.svg').pipe(_create$stream.stream()).on('error', function (err) {
-            _assert.assert.include(err.message, 'No svg files were passed down stream');
+        _vinylFs2.default.src("fixtures/invalid/empty.svg").pipe((0, _index.stream)()).on('error', function (err) {
+            _chai.assert.include(err.message, 'No svg files were passed down stream');
             done();
         });
     });
