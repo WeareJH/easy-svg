@@ -1,5 +1,6 @@
+require('source-map-support').install();
 var fs  = require('fs');
-var symb = require('./lib/index');
+var symb = require('./');
 
 var builder = symb.create();
 
@@ -11,3 +12,4 @@ builder.compile().then(function (out) {
 }).catch(function (err) {
     console.error(err);
 });
+
